@@ -173,10 +173,17 @@ func (c *Core) Write(ze zapcore.Entry, newFields []zapcore.Field) error {
 
 	payload := clone(c.fields, newFields)
 
-	payload["logger"] = ze.LoggerName
-	payload["msg"] = ze.Message
-	payload["caller"] = ze.Caller.String()
-	payload["stack"] = ze.Stack
+	if c.fields["caller"] != nil {
+		payload["caller"] = c.fields["caller"]
+	} else {
+		payload["caller"] = ze.Caller.String()
+	}
+
+	if c.fields["stack"] != nil {
+		payload["stack"] = c.fields["stack"]
+	} else {
+		payload["stack"] = ze.Stack
+	}
 
 	c.Logger.Log(gcl.Entry{
 		Timestamp: ze.Time,
