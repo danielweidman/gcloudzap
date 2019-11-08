@@ -7,7 +7,10 @@
 
 This package provides a zap logger that forwards entries to the Google Stackdriver Logging service as structured payloads.
 
-This version is a tiny change from the version fully created by jonstaryuk. The one difference is that it lets one override the "stack" and "caller" fields to be sent to StackDriver with custom inputs. If you don't need this feature, then use the main project: github.com/jonstaryuk/gcloudzap
+This version has two main changes from the version fully created by jonstaryuk:
+- It lets one override the "stack" and "caller" fields to be sent to StackDriver with custom inputs. 
+- It has versions of NewProduction() and NewDevelopment() [NewProductionWithOptions() and NewDevelopmentWithOptions()] that let you create a new client that will have GCP credentials other than those based on the APPLICATION_DEFAULT_PATH environment variable. Before you could do this with the New() function, but this way may be easier.
+If you don't need these feature, then use the main project: github.com/jonstaryuk/gcloudzap
 
 ## Quickstart
 
