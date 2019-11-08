@@ -13,7 +13,7 @@ the zapcore.Core implementation provided by this package.
 	$ go test -bench . github.com/danielweidman/gcloudzap
 	goos: darwin
 	goarch: amd64
-	pkg: github.com/jonstaryuk/gcloudzap
+	pkg: github.com/danielweidman/gcloudzap
 	BenchmarkCoreClone-4   	 2000000	       607 ns/op
 	BenchmarkCoreWrite-4   	 1000000	      2811 ns/op
 
