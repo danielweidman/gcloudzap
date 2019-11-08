@@ -1,8 +1,13 @@
 # ⚡ gcloudzap [![GoDoc](https://godoc.org/github.com/jonstaryuk/gcloudzap?status.svg)](https://godoc.org/github.com/danielweidman/gcloudzap)
 
+
+
+
 **(experimental)**
 
 This package provides a zap logger that forwards entries to the Google Stackdriver Logging service as structured payloads.
+
+This version is a tiny change from the version fully created by jonstaryuk. The one difference is that it lets one override the "stack" and "caller" fields to be sent to StackDriver with custom inputs.
 
 ## Quickstart
 
