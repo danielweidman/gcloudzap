@@ -1,4 +1,4 @@
-# ⚡ gcloudzap [![GoDoc](https://godoc.org/github.com/jonstaryuk/gcloudzap?status.svg)](https://godoc.org/github.com/jonstaryuk/gcloudzap)
+# ⚡ gcloudzap [![GoDoc](https://godoc.org/github.com/jonstaryuk/gcloudzap?status.svg)](https://godoc.org/github.com/danielweidman/gcloudzap)
 
 **(experimental)**
 
