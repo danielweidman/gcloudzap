@@ -33,6 +33,7 @@ import (
 	gcl "cloud.google.com/go/logging"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"google.golang.org/api/option"
 )
 
 func newClient(projectID string) (*gcl.Client, error) {
@@ -41,6 +42,14 @@ func newClient(projectID string) (*gcl.Client, error) {
 	}
 
 	return gcl.NewClient(context.Background(), projectID)
+}
+
+func newClientWithOptions(projectID string, options ...option.ClientOption) (*gcl.Client, error) {
+	if projectID == "" {
+		return nil, newError("the provided projectID is empty")
+	}
+
+	return gcl.NewClient(context.Background(), projectID, options...)
 }
 
 // NewDevelopment builds a development Logger that writes DebugLevel and above
@@ -59,6 +68,22 @@ func NewDevelopment(projectID string, logID string) (*zap.Logger, error) {
 	return New(zap.NewDevelopmentConfig(), client, logID)
 }
 
+// NewDevelopmentWithOptions builds a development Logger that writes DebugLevel and above
+// logs to standard error in a human-friendly format, as well as to
+// Stackdriver using Application Default Credentials or those specified in the input options.
+func NewDevelopmentWithOptions(projectID string, logID string, options ...option.ClientOption) (*zap.Logger, error) {
+	if logID == "" {
+		return nil, fmt.Errorf("the provided logID is empty")
+	}
+
+	client, err := newClientWithOptions(projectID, options...)
+	if err != nil {
+		return nil, newError("creating Google Logging client: %v", err)
+	}
+
+	return New(zap.NewDevelopmentConfig(), client, logID)
+}
+
 // NewProduction builds a production Logger that writes InfoLevel and above
 // logs to standard error as JSON, as well as to Stackdriver using Application
 // Default Credentials.
@@ -68,6 +93,22 @@ func NewProduction(projectID string, logID string) (*zap.Logger, error) {
 	}
 
 	client, err := newClient(projectID)
+	if err != nil {
+		return nil, newError("creating Google Logging client: %v", err)
+	}
+
+	return New(zap.NewProductionConfig(), client, logID)
+}
+
+// NewProductioWithOptions builds a production Logger that writes InfoLevel and above
+// logs to standard error as JSON, as well as to Stackdriver using
+// Application Default Credentials or those specified in the input options.
+func NewProductionWithOptions(projectID string, logID string, options ...option.ClientOption) (*zap.Logger, error) {
+	if logID == "" {
+		return nil, fmt.Errorf("the provided logID is empty")
+	}
+
+	client, err := newClientWithOptions(projectID, options...)
 	if err != nil {
 		return nil, newError("creating Google Logging client: %v", err)
 	}
@@ -175,16 +216,12 @@ func (c *Core) Write(ze zapcore.Entry, newFields []zapcore.Field) error {
 
 	payload["logger"] = ze.LoggerName
 	payload["msg"] = ze.Message
-	
-	if c.fields["caller"] != nil {
-		payload["caller"] = c.fields["caller"]
-	} else {
+
+	if c.fields["caller"] == nil {
 		payload["caller"] = ze.Caller.String()
 	}
 
-	if c.fields["stack"] != nil {
-		payload["stack"] = c.fields["stack"]
-	} else {
+	if c.fields["stack"] == nil {
 		payload["stack"] = ze.Stack
 	}
 
