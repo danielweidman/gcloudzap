@@ -173,6 +173,9 @@ func (c *Core) Write(ze zapcore.Entry, newFields []zapcore.Field) error {
 
 	payload := clone(c.fields, newFields)
 
+	payload["logger"] = ze.LoggerName
+	payload["msg"] = ze.Message
+	
 	if c.fields["caller"] != nil {
 		payload["caller"] = c.fields["caller"]
 	} else {
